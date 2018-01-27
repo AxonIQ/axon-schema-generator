@@ -5,3 +5,4 @@ target/
 .project
 .settings/
 *.sql
+dependency-reduced-pom.xml
