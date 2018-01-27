@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+                 version="1.0">
+    <!--
+        The below is useful if you use a database which supports sequences (like Oracle, Postgres), and also have
+        more automatically generated identifiers in your schema than only the one used for Axon events.
+
+        If you don't do this, the following will happen: Hibernate will create a single sequence (called
+        hibernate_sequence) and use it for everything. As a result, there will be gaps in the global event index
+        which will negatively affect tracking event processors.
+
+        With the configuration specified below, domain event entries will have their exclusive sequence, thus
+        minimizing gaps.
+    -->
+    <sequence-generator name="global_event_index_seq"
+                        allocation-size="1"
+                        sequence-name="global_event_index_seq"
+                        initial-value="1" />
+    <mapped-superclass class="org.axonframework.eventsourcing.eventstore.AbstractSequencedDomainEventEntry">
+        <attributes>
+            <id name="globalIndex">
+                <generated-value strategy="SEQUENCE" generator="global_event_index_seq"/>
+            </id>
+        </attributes>
+    </mapped-superclass>
+</entity-mappings>
