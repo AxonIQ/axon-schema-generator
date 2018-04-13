@@ -53,7 +53,6 @@ public class Application {
                 break;
             case SQL_SERVER_2012:
                 settings.put("hibernate.dialect", SQLServer2012Dialect.class);
-                System.out.println("SQL");
                 break;
 
         }
