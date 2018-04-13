@@ -12,8 +12,11 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.dialect.InnoDBStorageEngine;
 import org.hibernate.dialect.MySQL57Dialect;
 import org.hibernate.dialect.Oracle12cDialect;
+import org.hibernate.dialect.SQLServer2012Dialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
+import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
+import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
 
 import java.io.File;
 import java.util.EnumSet;
@@ -25,10 +28,13 @@ public class Application {
     enum RDBMS {
         MY_SQL_57_INNODB,
         ORACLE_12,
+        SQL_SERVER_2012
     }
 
     /* Set as appropriate. */
-    static final RDBMS rdbms = RDBMS.ORACLE_12;
+    static final RDBMS rdbms = RDBMS.SQL_SERVER_2012;
+    static final boolean ENABLE_SPRING_BOOT_DEFAULT_STRATEGY = true;
+
 
     public static void main(String[] args) {
 
@@ -45,6 +51,16 @@ public class Application {
             case ORACLE_12:
                 settings.put("hibernate.dialect", Oracle12cDialect.class);
                 break;
+            case SQL_SERVER_2012:
+                settings.put("hibernate.dialect", SQLServer2012Dialect.class);
+                System.out.println("SQL");
+                break;
+
+        }
+
+        if(ENABLE_SPRING_BOOT_DEFAULT_STRATEGY) {
+            settings.put("hibernate.implicit_naming_strategy", SpringImplicitNamingStrategy.class);
+            settings.put("hibernate.physical_naming_strategy", SpringPhysicalNamingStrategy.class);
         }
 
         StandardServiceRegistry standardServiceRegistry = new StandardServiceRegistryBuilder()
@@ -64,7 +80,7 @@ public class Application {
         metadataSources.addAnnotatedClass(AssociationValueEntry.class);
 
         switch(rdbms) {
-            case ORACLE_12:
+            case ORACLE_12: case SQL_SERVER_2012:
                 /* Look into this file for explanation. */
                 metadataSources.addResource("META-INF/orm.xml");
                 break;
